@@ -1,0 +1,94 @@
+import java.io.Console;
+import java.io.IOException;
+import java.util.Scanner;
+
+// due to the way eclipse is designed there's no way to code clearing the console into the program, 
+// but this could be used as a starting point for a movement/grid generation system
+
+public class Inputtest {
+  
+	
+	public static boolean validmovement(int Player, int limit) {
+		if ((Player > 0) && (Player < (limit - 1))) {
+			return true;
+		} else {
+			return false;
+		} 
+	}
+			
+	public static void main(String[] args) {
+		
+		int Xlength = 50;
+		int Ylength = 50;
+		Character[][] Pixel = new Character[Xlength][Ylength];
+		int PlayerX = (int)Math.ceil((Math.random() * 50));
+		int PlayerY = (int)Math.ceil((Math.random() * 50));
+		int x;
+		int y;
+		Scanner input = new Scanner(System.in);
+		
+		for ( y = 0; y < Ylength; y++) {
+			for (x = 0; x < Xlength; x++) {
+				Pixel[y][x] = '~';
+			}
+		}
+		
+		Pixel[PlayerY][PlayerX] = '@';
+		
+		for ( y = 0; y < Ylength; y++) {
+			for (x = 0; x < Xlength; x++) {
+				System.out.print(Pixel[y][x]);
+			}
+			System.out.println();
+		}
+		
+		String Movement = input.next();
+		
+		do {
+			
+			Pixel[PlayerY][PlayerX] = '~';
+			
+			switch (Movement) {
+				case "Up":
+					if (validmovement(PlayerY,Ylength)) {
+						PlayerY--;
+					}
+					break;
+				case "Left":
+					if (validmovement(PlayerX,Xlength)) {
+						PlayerX--;
+					}
+					break;
+				case "Right":
+					if (validmovement(PlayerX,Xlength)) {
+						PlayerX++;
+					}
+					break;
+				case "Down":
+					if (validmovement(PlayerY,Ylength)) {
+						PlayerY++;
+					}
+					break;
+				default:
+					break;
+			}
+						
+			Pixel[PlayerY][PlayerX] = '@';
+			
+					
+			for ( y = 0; y < Ylength; y++) {
+				for (x = 0; x < Xlength; x++) {
+					System.out.print(Pixel[y][x]);
+			}
+				
+			System.out.println();
+			}
+			
+			Movement = input.next();
+		} while (Movement != "End"); 
+		
+// using != is generally considered poor coding, so we can create a boolean variable for the final version instead
+
+		
+	}
+}
