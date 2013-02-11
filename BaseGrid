@@ -6,7 +6,14 @@ import java.util.Scanner;
 // but this could be used as a starting point for a movement/grid generation system
 
 public class Inputtest {
-  
+	
+	public static boolean insightradius(int tileX, int tileY, int PlayerX, int PlayerY, int Playersight) {
+		if ((Math.abs(PlayerX-tileX) <= Playersight) && Math.abs(PlayerY - tileY) <= Playersight) {
+			return true;
+		} else {
+			return false;
+		}
+	}
 	
 	public static boolean validmovement(int Player, int limit) {
 		if ((Player > 0) && (Player < (limit - 1))) {
@@ -18,26 +25,33 @@ public class Inputtest {
 			
 	public static void main(String[] args) {
 		
-		int Xlength = 50;
-		int Ylength = 50;
+		int Xlength = 50, Ylength = 50;
 		Character[][] Pixel = new Character[Xlength][Ylength];
-		int PlayerX = (int)Math.ceil((Math.random() * 50));
-		int PlayerY = (int)Math.ceil((Math.random() * 50));
-		int x;
-		int y;
+		Character[][] VPixel = new Character[Xlength][Ylength];
+		int PlayerX = (int)Math.ceil((Math.random() * 50) - 1);
+		int PlayerY = (int)Math.ceil((Math.random() * 50) - 1);
+		int x, y, Playersight = 5;
+		
 		Scanner input = new Scanner(System.in);
 		
 		for ( y = 0; y < Ylength; y++) {
 			for (x = 0; x < Xlength; x++) {
 				Pixel[y][x] = '~';
+				if (insightradius(x,y,PlayerX,PlayerY,Playersight)) {
+					VPixel[y][x] = Pixel[y][x];
+					VPixel[PlayerY][PlayerX] = '@';
+				}
+				if (VPixel[y][x] == null) {
+					VPixel[y][x] = ' ';
+				}
 			}
 		}
 		
-		Pixel[PlayerY][PlayerX] = '@';
+		VPixel[PlayerY][PlayerX] = '@';
 		
 		for ( y = 0; y < Ylength; y++) {
 			for (x = 0; x < Xlength; x++) {
-				System.out.print(Pixel[y][x]);
+				System.out.print(VPixel[y][x]);
 			}
 			System.out.println();
 		}
@@ -46,7 +60,6 @@ public class Inputtest {
 		
 		do {
 			
-			Pixel[PlayerY][PlayerX] = '~';
 			
 			switch (Movement) {
 				case "Up":
@@ -72,13 +85,18 @@ public class Inputtest {
 				default:
 					break;
 			}
-						
-			Pixel[PlayerY][PlayerX] = '@';
-			
-					
+											
 			for ( y = 0; y < Ylength; y++) {
 				for (x = 0; x < Xlength; x++) {
-					System.out.print(Pixel[y][x]);
+					if (insightradius(x,y,PlayerX,PlayerY,Playersight)) {
+						VPixel[y][x] = Pixel[y][x];
+						VPixel[PlayerY][PlayerX] = '@';
+					}
+					if (VPixel[y][x] == null) {
+						VPixel[y][x] = ' ';
+					}
+					
+						System.out.print(VPixel[y][x]);
 			}
 				
 			System.out.println();
@@ -87,7 +105,6 @@ public class Inputtest {
 			Movement = input.next();
 		} while (Movement != "End"); 
 		
-// using != is generally considered poor coding, so we can create a boolean variable for the final version instead
 
 		
 	}
