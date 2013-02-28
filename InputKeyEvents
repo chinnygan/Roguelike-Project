@@ -1,0 +1,27 @@
+// a start on the key input. Feel free to edit, make notes on what has changed etc.
+
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+public class InputKeyEvents extends KeyAdapter {
+  public void keyPress (KeyEvent e, int PlayerX, int PlayerY) {
+		int keycode = e.getKeyCode();
+		switch (keycode) {
+			case (KeyEvent.VK_UP):
+				PlayerY--;
+				break;
+			case (KeyEvent.VK_DOWN):
+				PlayerY++;
+				break;
+			case (KeyEvent.VK_LEFT):
+				PlayerX--;
+				break;
+			case (KeyEvent.VK_RIGHT):
+				PlayerX++;
+				break;
+		}
+	}
+	public static void main (String[] args) {
+		addKeyListener(new InputKeyEvents());
+	}
+}
