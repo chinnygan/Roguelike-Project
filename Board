@@ -1,0 +1,137 @@
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+ 
+// Right now there's a compilation error in the variables that I can't see how to fix, but other than that the code works fine.
+// Other classes can access the information by using the various getXXXX functions I've written. Please check which ones are
+// already written to avoid excess code in other classes. e.g. using Board.xyDist(x1,x2,y1,y2) instead of writing the a method
+// to the same effect in another class.
+
+public class Board {
+  private int[][] tileCreatureid = new int[50][50];
+	private int xlimit = 10, ylimit = 10, i, j = 0;
+	private char[][] tileType = new char[ylimit][xlimit], tileItem = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
+	tileCreatureid[(int)Math.floor(Math.random() * ylimit)][(int)Math.floor(Math.random() * xlimit)] = 1; // represents Player
+
+
+	public Board() {
+		for (i = 0; i < ylimit ;i++) {
+			for (j = 0; j < xlimit ; j++) {
+				tileItem[i][j] = ' ';
+				tileCreatureid[i][j] = 0; // represents empty square
+				tileType[i][j] = '~';
+			}
+		}
+	}
+	
+	public int getWidth() {
+		return xlimit;
+	}
+	
+	public int getHeight() {
+		return ylimit;
+	}
+	
+	public int getAgent(int x, int y) {
+		return tileCreatureid[y][x];
+	}
+	
+	public int setTileType(int x, int y, char type) {
+		tileType[y][x] = type;
+	}	
+	
+	public int getTileType(int x, int y) {
+		return tileType[y][x];
+	}	
+	
+	public int getItem(int x, int y) {
+		return tileItem[y][x];
+	}	
+	
+	public int setItem(int x, int y, char item) {
+		return tileItem[y][x] =  item;
+	}	
+	
+	public void setAgent(int agentid, int x, int y) {
+			tileCreatureid[y][x] = agentid; // only to be used when initially placing an agent
+	}										// in a space KNOWN TO BE EMPTY
+	
+	public void moveAgent(int agentid, int oldx, int oldy, int newx, int newy) {
+		if (tileCreatureid[newx][newy] == 0) {
+			tileCreatureid[newx][newy] = agentid;
+			tileCreatureid[oldx][oldy] = 0;
+		}
+	}
+	
+	
+		 
+	public static double xyDist (int x1, int x2, int y1, int y2) {
+		return Math.sqrt(((x2 - x1) * (x2 - x1)) - ((y2 - y1) * (y2 - y1))); 
+	}
+		
+	public void determineVisible(int sightradius, int playerX, int playerY) {;
+			char creatureChar;
+			for (i = 0; i < ylimit;i++) {
+				for (j = 0; j < xlimit; j++) {
+					if (xyDist(playerX, playerY, j, i) <= sightradius) {
+						if (tileCreatureid[i][j] == 0 && tileItem[i][j] == ' ') {
+							visTile[i][j] = tileType[i][j];
+						} else {
+							if (tileCreatureid[i][j] == 0 &&tileItem[i][j] != ' ') {
+								visTile[i][j] = tileItem[i][j];
+							}
+							else {
+								if (tileCreatureid[i][j] != 0) {
+									switch (tileCreatureid[i][j]) {
+									case 1:
+										 creatureChar = '@';
+										break;
+									default: creatureChar = ' ';
+											}
+								visTile[i][j] = creatureChar;
+								}
+							}
+						}
+					} else {
+						visTile[i][j] = ' ';
+					}
+					}
+				}
+					System.out.println();
+			} 
+
+	public void testConnections() { 		// used when punching holes in the map to make the cave-like structure.
+		for (i = 0; i < ylimit;i++) {		// determines if all adjacent tiles are not walls.
+			for (j = 0; j < xlimit; j++) {
+				if (tileType[i][j] != ' ' && tileType[i-1][j] != ' ' && tileType[i+1][j] != ' ' && tileType[i][j-1] != ' ' && tileType[i][j+1] != ' ' &&) {	
+			} else {
+				return false; 
+			}
+			}
+		}
+		return true;
+	}
+	
+	public void printBoard() {
+		for (i = 0; i < ylimit;i++) {
+			for (j = 0; j < xlimit; j++) {
+				System.out.print(visTile[i][j]);
+			}
+			System.out.println();
+		}
+	}
+	
+	
+	public void actionPerformed(ActionEvent e) {
+		//update
+	}
+			
+	public static void main(String[] args){
+	}
+
+}
+
+
+
+
+
+
