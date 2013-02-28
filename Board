@@ -1,16 +1,19 @@
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
  
-// Right now there's a compilation error in the variables that I can't see how to fix, but other than that the code works fine.
 // Other classes can access the information by using the various getXXXX functions I've written. Please check which ones are
 // already written to avoid excess code in other classes. e.g. using Board.xyDist(x1,x2,y1,y2) instead of writing the a method
 // to the same effect in another class.
 
-public class Board {
-  private int[][] tileCreatureid = new int[50][50];
+// Known errors:
+	.determineVisible does not act as intended. Compiles just fine, however.
+
+//Update 1: Fixed mistakes in .get and .set methods. Fixed compilation problem
+
+public class Board implements ActionListener {
+	private int[][] tileCreatureid = new int[50][50];
 	private int xlimit = 10, ylimit = 10, i, j = 0;
 	private char[][] tileType = new char[ylimit][xlimit], tileItem = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
-	tileCreatureid[(int)Math.floor(Math.random() * ylimit)][(int)Math.floor(Math.random() * xlimit)] = 1; // represents Player
 
 
 	public Board() {
@@ -35,7 +38,7 @@ public class Board {
 		return tileCreatureid[y][x];
 	}
 	
-	public int setTileType(int x, int y, char type) {
+	public void setTileType(int x, int y, char type) {
 		tileType[y][x] = type;
 	}	
 	
@@ -47,8 +50,8 @@ public class Board {
 		return tileItem[y][x];
 	}	
 	
-	public int setItem(int x, int y, char item) {
-		return tileItem[y][x] =  item;
+	public void setItem(int x, int y, char item) {
+		tileItem[y][x] =  item;
 	}	
 	
 	public void setAgent(int agentid, int x, int y) {
@@ -99,10 +102,10 @@ public class Board {
 					System.out.println();
 			} 
 
-	public void testConnections() { 		// used when punching holes in the map to make the cave-like structure.
+	public boolean testConnections() { 		// used when punching holes in the map to make the cave-like structure.
 		for (i = 0; i < ylimit;i++) {		// determines if all adjacent tiles are not walls.
 			for (j = 0; j < xlimit; j++) {
-				if (tileType[i][j] != ' ' && tileType[i-1][j] != ' ' && tileType[i+1][j] != ' ' && tileType[i][j-1] != ' ' && tileType[i][j+1] != ' ' &&) {	
+				if (tileType[i][j] != ' ' && tileType[i-1][j] != ' ' && tileType[i+1][j] != ' ' && tileType[i][j-1] != ' ' && tileType[i][j+1] != ' ') {	
 			} else {
 				return false; 
 			}
@@ -112,6 +115,7 @@ public class Board {
 	}
 	
 	public void printBoard() {
+		this.determineVisible(1, 1, 1); // will use .get methods in final version
 		for (i = 0; i < ylimit;i++) {
 			for (j = 0; j < xlimit; j++) {
 				System.out.print(visTile[i][j]);
@@ -126,12 +130,13 @@ public class Board {
 	}
 			
 	public static void main(String[] args){
+		// will be empty in final version
+		Board b = new Board();
+		b.setAgent(1, (int)Math.floor(Math.random() * b.getWidth()), (int)Math.floor(Math.random() * b.getHeight()));
+		b.printBoard();
 	}
 
 }
-
-
-
 
 
 
