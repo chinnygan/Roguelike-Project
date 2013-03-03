@@ -5,17 +5,28 @@ import java.util.List;
 public class Item {
 	private int id, def;
 	private String name, type, dmg, description, effect;
-		
+	private char rep;
 	public Item(int id) {
 		this.id = id;
 		int i = 0;
 		List<String> raw = new ArrayList<String>();
-		In in= new In("C:/Users/Ross/Rogue/RogueProject/src/items.txt"); 
+		In in= new In("/data/items.txt"); 
 		while (in.hasNextLine()) {
 			raw.add(i, in.readLine());
 			i++;
 		}
 		decrypt(raw.get(id));
+		switch (type) {
+		case "Weapon":
+			rep = ')';
+			break;
+		case "Armor":
+			rep = ']';
+			break;
+		case "Consumable":
+			rep = '!';
+			break;
+		}
 	}
 		
 	// Reads in a set of strings from the items.txt file in the format: name(dmg,def,type,rep,effect,description)
@@ -62,7 +73,45 @@ public class Item {
 			return new Item((int)Math.floor(Math.random() * 5));
 			// should alter the value 5 according to the number of entries in item.txt
 		}
-	}
+		
+		public int getid() {
+			return id;
+		}
+		
+		public char getrep() {
+			return rep;
+		}
+		
+		public String getname() {
+			return name;
+		}
+		
+		public int getdef() {
+			return def;
+		}
+		
+		public String getdescription() {
+			return description;
+		}
+		
+		public String gettype() {
+			return type;
+		}
+		
+		public String getdmgString() {
+			return dmg;
+		}
+		
+		public int getdmgVal() {
+			if (dmg.equals("0")) {
+				return 0;
+			} else {
+				return (int) (Integer.parseInt(dmg.substring(0, dmg.indexOf('d'))) * Math.ceil(Math.random() * Integer.parseInt(dmg.substring(dmg.indexOf('d')+1, dmg.length()))));
+
+			}
+		}
+		
+}
 
 
 
