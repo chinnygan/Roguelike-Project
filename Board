@@ -1,15 +1,15 @@
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
- 
 // Other classes can access the information by using the various getXXXX functions I've written. Please check which ones are
 // already written to avoid excess code in other classes. e.g. using Board.xyDist(x1,x2,y1,y2) instead of writing a method
 // to the same effect in another class.
 
 // Known errors:
-	.determineVisible does not act as intended. Compiles just fine, however.
+//	.determineVisible does not act as intended. Compiles just fine, however.
+//	.testconnections will only ensure at least 2 tiles are grouped together.	
 
 //Update 1: Fixed mistakes in .get and .set methods. Fixed compilation problem
 //Update 2: Added a .toString() method to simplify creation of JFrame over using .printboard()
+//Update 3: Added a prototype function for shaping the map. Needs work. Also added function for printing
+//          the true contents of a board.
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -17,46 +17,32 @@ import java.awt.event.ActionListener;
 public class Board implements ActionListener {
 	private int[][] tileCreatureid = new int[50][50];
 	private int xlimit = 10, ylimit = 10, i, j = 0;
-	private char[][] tileType = new char[ylimit][xlimit], tileItem = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
-
+	private char[][] tileType = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
+	private Item[][] tileItem = new Item[ylimit][xlimit];
 
 	public Board() {
 		for (i = 0; i < ylimit ;i++) {
 			for (j = 0; j < xlimit ; j++) {
-				tileItem[i][j] = ' ';
+				tileItem[i][j] = null;
 				tileCreatureid[i][j] = 0; // represents empty square
 				tileType[i][j] = '~';
 			}
 		}
+		shape();
+	}
+	public Board(int xlimit, int ylimit, char[][] tileType, Item[][] tileItem, int[][] tileCreatureid) {
+		this.xlimit = xlimit;
+		this.ylimit = ylimit;
+		for (i=0;i<ylimit;i++) {
+			for (j=0;j<xlimit;j++) {
+				this.tileCreatureid[i][j] = tileCreatureid[i][j];
+				this.tileType[i][j] = tileType[i][j];
+				this.tileItem[i][j] = tileItem[i][j];
+			}
+		}
 	}
 	
-	public int getWidth() {
-		return xlimit;
-	}
 	
-	public int getHeight() {
-		return ylimit;
-	}
-	
-	public int getAgent(int x, int y) {
-		return tileCreatureid[y][x];
-	}
-	
-	public void setTileType(int x, int y, char type) {
-		tileType[y][x] = type;
-	}	
-	
-	public int getTileType(int x, int y) {
-		return tileType[y][x];
-	}	
-	
-	public int getItem(int x, int y) {
-		return tileItem[y][x];
-	}	
-	
-	public void setItem(int x, int y, char item) {
-		tileItem[y][x] =  item;
-	}	
 	
 	public void setAgent(int agentid, int x, int y) {
 			tileCreatureid[y][x] = agentid; // only to be used when initially placing an agent
@@ -80,11 +66,11 @@ public class Board implements ActionListener {
 			for (i = 0; i < ylimit;i++) {
 				for (j = 0; j < xlimit; j++) {
 					if (xyDist(playerX, playerY, j, i) <= sightradius) {
-						if (tileCreatureid[i][j] == 0 && tileItem[i][j] == ' ') {
+						if (tileCreatureid[i][j] == 0 && tileItem[i][j] == null) {
 							visTile[i][j] = tileType[i][j];
 						} else {
-							if (tileCreatureid[i][j] == 0 &&tileItem[i][j] != ' ') {
-								visTile[i][j] = tileItem[i][j];
+							if (tileCreatureid[i][j] == 0 &&tileItem[i][j] != null) {
+								visTile[i][j] = tileItem[i][j].getrep();
 							}
 							else {
 								if (tileCreatureid[i][j] != 0) {
@@ -109,7 +95,7 @@ public class Board implements ActionListener {
 	public boolean testConnections() { 		// used when punching holes in the map to make the cave-like structure.
 		for (i = 0; i < ylimit;i++) {		// determines if all adjacent tiles are not walls.
 			for (j = 0; j < xlimit; j++) {
-				if (tileType[i][j] != ' ' && tileType[i-1][j] != ' ' && tileType[i+1][j] != ' ' && tileType[i][j-1] != ' ' && tileType[i][j+1] != ' ') {	
+				if (tileType[fallinrange(i,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i-1,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i+1,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i,ylimit)][fallinrange(j-1,xlimit)] != ' ' || tileType[fallinrange(i,ylimit)][fallinrange(j+1,xlimit)] != ' ') {	
 			} else {
 				return false; 
 			}
@@ -118,6 +104,15 @@ public class Board implements ActionListener {
 		return true;
 	}
 	
+	public int fallinrange(int val, int limit) {
+		if (val >= limit) {
+			val = limit - 2;
+		}
+		if (val < 0) {
+			val = Math.abs(val);
+		}
+		return val;
+	}
 	public void printBoard() {
 		this.determineVisible(1, 1, 1); // will use .get methods in final version
 		for (i = 0; i < ylimit;i++) {
@@ -128,6 +123,36 @@ public class Board implements ActionListener {
 		}
 	}
 	
+	public void printTrueBoard() {
+		this.determineVisible(1, 1, 1); // will use .get methods in final version
+		char creatureChar;
+		for (i = 0; i < ylimit;i++) {
+			for (j = 0; j < xlimit; j++) {
+					if (tileCreatureid[i][j] == 0 && tileItem[i][j] == null) {
+						visTile[i][j] = tileType[i][j];
+					} else {
+						if (tileCreatureid[i][j] == 0 &&tileItem[i][j] != null) {
+							visTile[i][j] = tileItem[i][j].getrep();
+						}
+						else {
+							if (tileCreatureid[i][j] != 0) {
+								switch (tileCreatureid[i][j]) {
+								case 1:
+									 creatureChar = '@';
+									break;
+								default: creatureChar = ' ';
+										}
+							visTile[i][j] = creatureChar;
+							}
+						}
+					
+				}
+					System.out.print(visTile[i][j]);
+			}
+				System.out.println();
+		}
+	}
+
 	public String toString() {
 		this.determineVisible(1, 1, 1); // will use .get methods in final version
 		String out = "";
@@ -147,7 +172,67 @@ public class Board implements ActionListener {
 	public static void main(String[] args){
 
 	}
+	
+	public void shape() {
+		//gives the map a new structure
+		boolean ok = false;
 
+		Board temp = new Board(xlimit, ylimit, tileType, tileItem, tileCreatureid);
+		
+		while (ok == false) {
+			
+			for (i = 0; i < ylimit; i++) {
+				for (j = 0; j < xlimit; j++) {
+					temp.tileType[i][j] = this.tileType[i][j];
+					if (Math.random() <= 0.7) temp.tileType[i][j] = ' ';
+				}
+			}
+			for (i = 0; i < ylimit; i++) {
+				for (j = 0; j < xlimit; j++) {
+					if (Math.random() <= 0) temp.tileType[i][j] = ' ';
+				}
+			}
+			if (temp.testConnections() == true) {
+				ok = true;
+			}
+		}
+		
+		for (i = 0; i < ylimit; i++) {
+			for (j = 0; j < xlimit; j++) {
+				this.tileType[i][j] = temp.tileType[i][j];
+			}
+		}
+	}
+	
+	public int getWidth() {
+		return xlimit;
+	}
+	
+	public int getHeight() {
+		return ylimit;
+	}
+	
+	public int getAgent(int x, int y) {
+		return tileCreatureid[y][x];
+	}
+	
+	public void setTileType(int x, int y, char type) {
+		tileType[y][x] = type;
+	}	
+	
+	public int getTileType(int x, int y) {
+		return tileType[y][x];
+	}	
+	
+	public Item getItem(int x, int y) {
+		return tileItem[y][x];
+	}	
+	
+	public void setItem(int x, int y, Item item) {
+		tileItem[y][x] =  item;
+	}	
 }
+
+
 
 
