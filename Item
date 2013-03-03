@@ -1,26 +1,16 @@
-// This class is dependent on an items.txt file contained in items.txt in the format:
-
-// Weapon(Damage,Defence,Type,Representing Character, Effect, Description)
-
-// also relies on the StdIn.java class from labs.
-
 import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
 public class Item {
-  private int id, def;
-	private String name, type, dmg, description,effect;
-	private char rep;
-	
-	// Reads in a set of strings from the items.txt file
-	// Assigns values and sets item variables to appropriate values
-
+	private int id, def;
+	private String name, type, dmg, description, effect;
+		
 	public Item(int id) {
 		this.id = id;
 		int i = 0;
 		List<String> raw = new ArrayList<String>();
-		In in= new In("/data/items.txt"); 
+		In in= new In("C:/Users/Ross/Rogue/RogueProject/src/items.txt"); 
 		while (in.hasNextLine()) {
 			raw.add(i, in.readLine());
 			i++;
@@ -28,7 +18,8 @@ public class Item {
 		decrypt(raw.get(id));
 	}
 		
-
+	// Reads in a set of strings from the items.txt file in the format: name(dmg,def,type,rep,effect,description)
+	// Assigns values and sets item variables to appropriate values
 		
 		public static String chop(String s) {
 			if (s.indexOf(',') != -1) {
@@ -62,18 +53,16 @@ public class Item {
 			s = Item.chop(s);
 			type = (s.substring(0, s.indexOf(',')));
 			s = Item.chop(s);
-			rep = s.charAt(0);
-			s = Item.chop(s);
 			effect = s.substring(0, s.length());
 			s = Item.chop(s);
 			description = (s.substring(0, s.length()));
-			
 		}
-
+		
 		public Item randomItem() {
 			return new Item((int)Math.floor(Math.random() * 5));
-		// should alter the value 5 according to the number of entries in item.txt
+			// should alter the value 5 according to the number of entries in item.txt
 		}
 	}
+
 
 
