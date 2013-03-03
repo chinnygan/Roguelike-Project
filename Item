@@ -1,0 +1,72 @@
+// This class is dependent on an items.txt file contained in items.txt in the format:
+
+// Weapon(Damage,Defence,Type,Representing Character, Effect, Description)
+
+// also relies on the StdIn.java class from labs.
+
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Item {
+  private int id, def;
+	private String name, type, dmg, description,effect;
+	private char rep;
+		
+	public Item(int id) {
+		this.id = id;
+		int i = 0;
+		List<String> raw = new ArrayList<String>();
+		In in= new In("/data/items.txt"); 
+		while (in.hasNextLine()) {
+			raw.add(i, in.readLine());
+			i++;
+		}
+		decrypt(raw.get(id));
+	}
+		
+	// Reads in a set of strings from the items.txt file
+	// Assigns values and sets item variables to appropriate values
+		
+		public static String chop(String s) {
+			if (s.indexOf(',') != -1) {
+				return s.substring(s.indexOf(',')+1, s.length());
+			} else {
+				return s.substring(0, s.indexOf(','));
+			}
+		}
+		
+		public String toString() {
+			String out = "";
+			switch (type) {
+			case "Weapon":
+				out = name + ": " + dmg + '\r' + description;
+				break;
+			case "Armor":
+				out = name + ": DR " + def + '\r' + description;
+				break;
+			case "Consumable":
+				out = name + ": " + '\r' + description;
+			}
+			return out;
+		}
+		
+		public void decrypt(String s) {
+			name = s.substring(0,s.indexOf('('));
+			s = s.substring(s.indexOf('(')+1, s.indexOf(')'));
+			dmg = s.substring(0, s.indexOf(','));
+			s = Item.chop(s);
+			def = Integer.parseInt(s.substring(0, s.indexOf(',')));
+			s = Item.chop(s);
+			type = (s.substring(0, s.indexOf(',')));
+			s = Item.chop(s);
+			rep = s.charAt(0);
+			s = Item.chop(s);
+			effect = s.substring(0, s.length());
+			s = Item.chop(s);
+			description = (s.substring(0, s.length()));
+			
+		}
+	}
+
+
