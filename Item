@@ -12,7 +12,10 @@ public class Item {
   private int id, def;
 	private String name, type, dmg, description,effect;
 	private char rep;
-		
+	
+	// Reads in a set of strings from the items.txt file
+	// Assigns values and sets item variables to appropriate values
+
 	public Item(int id) {
 		this.id = id;
 		int i = 0;
@@ -25,8 +28,7 @@ public class Item {
 		decrypt(raw.get(id));
 	}
 		
-	// Reads in a set of strings from the items.txt file
-	// Assigns values and sets item variables to appropriate values
+
 		
 		public static String chop(String s) {
 			if (s.indexOf(',') != -1) {
