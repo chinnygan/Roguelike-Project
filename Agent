@@ -6,13 +6,7 @@ public class Agent {
 
 	private int xpos;
 	private int ypos;
- 
-	//Creates an agent with x & y position, possibly not going to be used.
-	public Agent(int xPosition, int yPosition) {
-		xpos = xPosition;
-		ypos = yPosition;
-	}
-	
+
 	//Set values for x & y
 	public void setX(int x) {
 		xpos = x;
