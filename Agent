@@ -4,10 +4,10 @@
 
 public class Agent {
 
-  private int xpos;
+	private int xpos;
 	private int ypos;
  
-	//Creates an agent with x & y position, possibly not going to be used
+	//Creates an agent with x & y position, possibly not going to be used.
 	public Agent(int xPosition, int yPosition) {
 		xpos = xPosition;
 		ypos = yPosition;
