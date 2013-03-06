@@ -3,34 +3,43 @@
 // to the same effect in another class.
 
 // Known errors:
-//	.determineVisible does not act as intended. Compiles just fine, however.
-//	.testconnections will only ensure at least 2 tiles are grouped together.	
+//	.determineVisible does not act as intended. Compiles just fine, however.	
 
 //Update 1: Fixed mistakes in .get and .set methods. Fixed compilation problem
 //Update 2: Added a .toString() method to simplify creation of JFrame over using .printboard()
 //Update 3: Added a prototype function for shaping the map. Needs work. Also added function for printing
 //          the true contents of a board.
+//Update 4: New approach for map. Now starts with a blank grid then places room and corridors. WIP.
+	    Added Room Class to make this task easier, as well as a merging method to Board.
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.geom.Point2D;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-public class Board implements ActionListener {
+public class Board {
 	private int[][] tileCreatureid = new int[50][50];
 	private int xlimit = 10, ylimit = 10, i, j = 0;
 	private char[][] tileType = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
 	private Item[][] tileItem = new Item[ylimit][xlimit];
+	private boolean[][] shapeable = new boolean[ylimit][xlimit];
 
+	//creates empty board
 	public Board() {
 		for (i = 0; i < ylimit ;i++) {
 			for (j = 0; j < xlimit ; j++) {
 				tileItem[i][j] = null;
 				tileCreatureid[i][j] = 0; // represents empty square
-				tileType[i][j] = '~';
+				tileType[i][j] = ' ';
+				visTile[i][j] = ' ';
+				shapeable[i][j] = true;
 			}
 		}
-		shape();
 	}
-	public Board(int xlimit, int ylimit, char[][] tileType, Item[][] tileItem, int[][] tileCreatureid) {
+	
+	// creates board given the values of another board. Effectively clones a board.
+	public Board(int xlimit, int ylimit, char[][] tileType, Item[][] tileItem, int[][] tileCreatureid, boolean[][] shapable, char visTile[][]) {
 		this.xlimit = xlimit;
 		this.ylimit = ylimit;
 		for (i=0;i<ylimit;i++) {
@@ -38,29 +47,29 @@ public class Board implements ActionListener {
 				this.tileCreatureid[i][j] = tileCreatureid[i][j];
 				this.tileType[i][j] = tileType[i][j];
 				this.tileItem[i][j] = tileItem[i][j];
+				this.shapeable[i][j] = shapable[i][j];
+				this.visTile[i][j] = visTile[i][j];
 			}
 		}
 	}
 	
 	
-	
-	public void setAgent(int agentid, int x, int y) {
-			tileCreatureid[y][x] = agentid; // only to be used when initially placing an agent
-	}										// in a space KNOWN TO BE EMPTY
-	
-	public void moveAgent(int agentid, int oldx, int oldy, int newx, int newy) {
-		if (tileCreatureid[newx][newy] == 0) {
-			tileCreatureid[newx][newy] = agentid;
-			tileCreatureid[oldx][oldy] = 0;
+	//sets the character shown in a tile to the character representation of the Agent.
+	public void setAgent(int id, int x, int y) {
+		if (tileType[y][x] != 0) {
+			tileCreatureid[y][x] = id;
 		}
 	}
 	
 	
-		 
+	
+	
+	//determines linear distance between two tiles
 	public static double xyDist (int x1, int x2, int y1, int y2) {
 		return Math.sqrt(((x2 - x1) * (x2 - x1)) - ((y2 - y1) * (y2 - y1))); 
 	}
-		
+	
+	// uses the player's current position and sight radius to determine which tiles can currently be seen
 	public void determineVisible(int sightradius, int playerX, int playerY) {;
 			char creatureChar;
 			for (i = 0; i < ylimit;i++) {
@@ -84,37 +93,18 @@ public class Board implements ActionListener {
 								}
 							}
 						}
-					} else {
-						visTile[i][j] = ' ';
+						}
 					}
-					}
+					
 				}
 					System.out.println();
 			} 
 
-	public boolean testConnections() { 		// used when punching holes in the map to make the cave-like structure.
-		for (i = 0; i < ylimit;i++) {		// determines if all adjacent tiles are not walls.
-			for (j = 0; j < xlimit; j++) {
-				if (tileType[fallinrange(i,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i-1,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i+1,ylimit)][fallinrange(j,xlimit)] != ' ' || tileType[fallinrange(i,ylimit)][fallinrange(j-1,xlimit)] != ' ' || tileType[fallinrange(i,ylimit)][fallinrange(j+1,xlimit)] != ' ') {	
-			} else {
-				return false; 
-			}
-			}
-		}
-		return true;
-	}
 	
-	public int fallinrange(int val, int limit) {
-		if (val >= limit) {
-			val = limit - 2;
-		}
-		if (val < 0) {
-			val = Math.abs(val);
-		}
-		return val;
-	}
+	
+	//prints the board as the player sees it.
 	public void printBoard() {
-		this.determineVisible(1, 1, 1); // will use .get methods in final version
+		this.determineVisible(player.getSight(),player.getX(), player.getY()); // will use .get methods in final version
 		for (i = 0; i < ylimit;i++) {
 			for (j = 0; j < xlimit; j++) {
 				System.out.print(visTile[i][j]);
@@ -123,8 +113,8 @@ public class Board implements ActionListener {
 		}
 	}
 	
+	//prints the board as though the player had a sight radius of 1000.
 	public void printTrueBoard() {
-		this.determineVisible(1, 1, 1); // will use .get methods in final version
 		char creatureChar;
 		for (i = 0; i < ylimit;i++) {
 			for (j = 0; j < xlimit; j++) {
@@ -164,46 +154,124 @@ public class Board implements ActionListener {
 		}
 		return out;
 	}
-	
-	public void actionPerformed(ActionEvent e) {
-		//update
-	}
 			
 	public static void main(String[] args){
 
 	}
 	
+	//fills the map with certain rooms depending on the type of floor generated within this method
+	// 1: normal
+	// 2: open area with enclosed rooms
+	// 3: labyrinth
+	// 4: arena
+	// 5: haven
 	public void shape() {
-		//gives the map a new structure
-		boolean ok = false;
-
-		Board temp = new Board(xlimit, ylimit, tileType, tileItem, tileCreatureid);
+		int floortype = (int) Math.ceil(Math.random() * 5);
 		
-		while (ok == false) {
-			
-			for (i = 0; i < ylimit; i++) {
-				for (j = 0; j < xlimit; j++) {
-					temp.tileType[i][j] = this.tileType[i][j];
-					if (Math.random() <= 0.7) temp.tileType[i][j] = ' ';
-				}
-			}
-			for (i = 0; i < ylimit; i++) {
-				for (j = 0; j < xlimit; j++) {
-					if (Math.random() <= 0) temp.tileType[i][j] = ' ';
-				}
-			}
-			if (temp.testConnections() == true) {
-				ok = true;
-			}
-		}
-		
-		for (i = 0; i < ylimit; i++) {
-			for (j = 0; j < xlimit; j++) {
-				this.tileType[i][j] = temp.tileType[i][j];
-			}
+		switch (floortype) {
+		case 1: shapenormal();
+				addmonsters();
+				additems();
+			break;
+		case 2: shapenormal();
+				openup();
+				addmonsters();
+				additems();
+			break;
+		case 3: shapelabyrinth();
+				addmonsters();
+				additems();
+			break;
+		case 4: shapearena();
+				addmonsters();
+				additems();
+			break;
+		case 5: shapenormal();
+				additems();
+			break;
 		}
 	}
 	
+	//sets all shapeable tiles to ~
+	private void openup() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//generates a bunch of items and places them on the board
+	private void additems() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//generates a bunch of monsters and places them on the board
+	private void addmonsters() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//shapes as one large circular room, adds more monsters than normal
+	private void shapearena() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//shapes as a series of weaving corridors
+	private void shapelabyrinth() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	//places a random number of rooms and connects them
+	private void shapenormal() {
+
+		int n, number = (int) (Math.ceil(Math.random() * 10)) + 5;
+		ArrayList<Room> r = new ArrayList<Room>();
+		int centreX = (int) Math.floor(Math.random() * (xlimit - 5) ) + 2;
+		int centreY = (int) Math.floor(Math.random() * (ylimit - 5) ) + 2;
+		
+		for (n=0;n<=number;n++) {
+			Room temp = new Room(centreY, centreX);
+			if (Math.abs(temp.getCentreX() - centreX) >= 5 && Math.abs(((Room) temp).getCentreY() - centreY) >= 5) {
+				r.add(n,temp);
+				mergeRoom(r.get(n));
+			}
+		}
+		
+	}
+
+	//places a room a room on the board
+	private void mergeRoom(Room room) {
+		for (i=0;i<ylimit;i++) {
+			for (j=0;j<xlimit;j++) {
+				// lotsa code will go here
+			}
+		}
+		
+	}
+
+	//obsolete, being kept for reference
+	public void placeSquare(int centreX, int centreY, int radius) {
+		
+	
+		for (i = centreY - radius; i <= centreY + radius; i++) {
+			for (j = centreX - radius; j <= centreX + radius; j++) {
+				if ((centreX - j >= 0) && (centreX + j <= xlimit - 1) && (centreY - i >= 0) && (centreY + i <= ylimit - 1)) {
+					tileType[i][j] = '~';
+				}
+			}
+		}
+		
+		for (i = centreY - radius - 1; i <= centreY + radius + 1; i++)
+			for (j = centreX - radius - 1; j <= centreX + radius + 1; j++) {
+				if ((centreX - j >= 0) && (centreX + j <= xlimit - 1) && (centreY - i >= 0) && (centreY + i <= ylimit - 1)) {
+					shapeable[i][j] = false;
+				}
+				
+			}
+	}
+			
+	// various .get / .set methods
 	public int getWidth() {
 		return xlimit;
 	}
@@ -230,9 +298,7 @@ public class Board implements ActionListener {
 	
 	public void setItem(int x, int y, Item item) {
 		tileItem[y][x] =  item;
-	}	
+	}
 }
-
-
 
 
