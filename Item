@@ -2,7 +2,9 @@ import java.io.LineNumberReader;
 import java.util.ArrayList;
 import java.util.List;
 
+//Update 1: Added a few classes for getting damage values and for using items
 public class Item {
+	static Player player = new Player(1, 1); // temporary
 	private int id, def;
 	private String name, type, dmg, description, effect;
 	private char rep;
@@ -10,7 +12,7 @@ public class Item {
 		this.id = id;
 		int i = 0;
 		List<String> raw = new ArrayList<String>();
-		In in= new In("/data/items.txt"); 
+		In in= new In("C:/Users/Ross/Rogue/RogueProject/data/items.txt"); 
 		while (in.hasNextLine()) {
 			raw.add(i, in.readLine());
 			i++;
@@ -51,6 +53,9 @@ public class Item {
 				break;
 			case "Consumable":
 				out = name + ": " + '\r' + description;
+				break;
+			case "Misc":
+				out = name + ": " + '\r' + description;
 			}
 			return out;
 		}
@@ -69,9 +74,9 @@ public class Item {
 			description = (s.substring(0, s.length()));
 		}
 		
-		public Item randomItem() {
-			return new Item((int)Math.floor(Math.random() * 5));
-			// should alter the value 5 according to the number of entries in item.txt
+		public static Item randomItem() {
+			final int total = 13; // must be set to the number of items in the items.text file + 1
+			return new Item((int)Math.floor(Math.random() * total));
 		}
 		
 		public int getid() {
@@ -103,15 +108,27 @@ public class Item {
 		}
 		
 		public int getdmgVal() {
-			if (dmg.equals("0")) {
-				return 0;
-			} else {
-				return (int) (Integer.parseInt(dmg.substring(0, dmg.indexOf('d'))) * Math.ceil(Math.random() * Integer.parseInt(dmg.substring(dmg.indexOf('d')+1, dmg.length()))));
-
+			int total = 0;
+			if (type == "Weapon") {
+				int i;
+				if (dmg.equals("0")) {
+					return 0;
+				} else {
+					for (i = 0; i < Integer.parseInt(dmg.substring(0, dmg.indexOf('d'))); i++) {
+						total = total + (int) Math.ceil(Math.random() * Integer.parseInt(dmg.substring(dmg.indexOf('d')+1, dmg.length())));
+					}
+				}
 			}
+			return total;
 		}
 		
+		public void use() {
+			// will go in Player class so the item can be deleted from inventory
+		}
+			
 }
+		
+
 
 
 
