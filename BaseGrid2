@@ -80,7 +80,7 @@ System.out.println();
 // Gets the next player movement from the console
 
 String Movement = input.next();
-char actualMovement = Movement.charAt(0):
+//char actualMovement = Movement.charAt(0):
 
 // Loop which determines if a player can move as per the console command and then reprints the grid according
 // to what the player last saw in each square. Repeats until the console command 'End' is entered.
