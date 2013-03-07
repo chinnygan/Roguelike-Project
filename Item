@@ -3,8 +3,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 //Update 1: Added a few classes for getting damage values and for using items
+//Update 2: Added function for evaluation a string representation of dice rolls, e.g. 1d8, 2d4, 3d6
+	    Added heal function. More effects to follow.
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.List;
+
 public class Item {
-	static Player player = new Player(1, 1); // temporary
+	Player player = new Player(1, 1); // temporary
 	private int id, def;
 	private String name, type, dmg, description, effect;
 	private char rep;
@@ -111,13 +117,19 @@ public class Item {
 			int total = 0;
 			if (type == "Weapon") {
 				int i;
-				if (dmg.equals("0")) {
-					return 0;
+				if (dmg.contains("d")) {
+					total = evaluate(dmg);
 				} else {
-					for (i = 0; i < Integer.parseInt(dmg.substring(0, dmg.indexOf('d'))); i++) {
-						total = total + (int) Math.ceil(Math.random() * Integer.parseInt(dmg.substring(dmg.indexOf('d')+1, dmg.length())));
-					}
+					return 0;
 				}
+			}
+			return total;
+		}
+		
+		public int evaluate(String dicerep) {
+			int i, total = 0;
+			for (i = 0; i < Integer.parseInt(dicerep.substring(0, dicerep.indexOf('d'))); i++) {
+				total = total + (int) Math.ceil(Math.random() * Integer.parseInt(dicerep.substring(dicerep.indexOf('d')+1, dicerep.length())));
 			}
 			return total;
 		}
@@ -125,10 +137,13 @@ public class Item {
 		public void use() {
 			// will go in Player class so the item can be deleted from inventory
 		}
+		
+		// calls a function from the combat class to heal the player nd6 points of damage
+		public void heal(int n) {
+			Combat.heal(evaluate("" + n + "d6"));
+		}
 			
 }
 		
-
-
 
 
