@@ -1,0 +1,34 @@
+//Just something I made in notepad while waiting for a bus at kb
+
+Public Class Client implements KeyListener {
+  Public Static void main(String[] args) {
+		ArrayList<Board> boards = new ArrayList<Board>();
+		ArrayList<Monster> monsters = new ArrayList<Monster>();
+		int currentboard = 0;
+		boolean alive = true;
+		newBoard();
+		initiate();
+
+		Public void newBoard() {
+			boards.add(new Board());
+		}
+
+		public void initiate() {
+			int tempx, tempy;
+			boolean b = false;
+
+			do {
+				tempx = (int) Math.floor(Math.random * boards.get(currentboard).getxlimit());
+				tempy = (int) Math.floor(Math.random * boards.get(currentboard).getylimit());
+				if (boards.get(currentboard).getTileType(tempx,tempy) == '~') {
+					b = true;
+				}
+			} while (b == false);
+		}
+
+		do {
+			//get player action
+			for (Monster b: monsters) {
+				//get monster b action
+			}
+		}
