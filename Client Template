@@ -1,7 +1,8 @@
 //Just something I made in notepad while waiting for a bus at kb
+//Apologies for any errors, I've not got eclipse atm and i'm remembering a lot of VB syntax
 
 Public Class Client implements KeyListener {
-  Public Static void main(String[] args) {
+	Public Static void main(String[] args) {
 		ArrayList<Board> boards = new ArrayList<Board>();
 		ArrayList<Monster> monsters = new ArrayList<Monster>();
 		int currentboard = 0;
@@ -9,10 +10,18 @@ Public Class Client implements KeyListener {
 		newBoard();
 		initiate();
 
+		//creates new board in boards list i.e. adds a new floor to dungeon
 		Public void newBoard() {
 			boards.add(new Board());
 		}
 
+		//adds a monster to the monsters list, does not place it anywhere.
+		Public void newMonsters() {
+			monsters.add(randomMonster);
+		//will actually need to calcualte whether or not the monster is appropriate for the player to fight
+
+		//sets the player's position on the current floor. To be called before play starts or
+		//all sorts of shit will go down
 		public void initiate() {
 			int tempx, tempy;
 			boolean b = false;
@@ -26,9 +35,11 @@ Public Class Client implements KeyListener {
 			} while (b == false);
 		}
 
+		//gets actions until player is dead
 		do {
 			//get player action
 			for (Monster b: monsters) {
 				//get monster b action
 			}
-		}
+		} while (alive == true)
+}
