@@ -3,9 +3,14 @@
 //It's not as lovely as it needs to be
 
 public class Agent {
-
+	
 	private int x;
 	private int y;
+	
+	public Agent(int x, int y) {
+		this.x = y;
+		this.y = y;
+	}
 
 	//Set values for x & y
 	public void setX(int x) {
