@@ -1,0 +1,35 @@
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+
+public class Client implements KeyListener {
+  
+  public void keyPressed(KeyEvent e){
+    int key = e.getKeyCode();
+    
+    if (key == KeyEvent.VK_LEFT)        //press left arrow to move player left
+      player.moveleft = true;
+    if (key == KeyEvent.VK_RIGHT)       //press right arrow to move player right
+      player.moveright = true;     
+    if (key == KeyEvent.VK_UP)         //press up arrow to move player up
+      player.moveup = true;
+    if (key == KeyEvent.VK_DOWN)       //press down arrow to move player down 
+      player.movedown = true;
+    if (key == KeyEvent.VK_P)          //press p to pause the game and open the options menu 
+      optionsMenu();
+    if (key == KeyEvent.VK_I)          //press i to open the inventory
+      openInventory();
+    if (key == KeyEvent.VK_SPACE)      //press the space bar to attack
+      attack();
+  }
+  
+
+    public void keyReleased(KeyEvent e) {
+        
+    }
+
+    public void keyTyped(KeyEvent e) {
+        
+    }
+
+}
