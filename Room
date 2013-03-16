@@ -1,30 +1,41 @@
 //Very much WIP
+//Update 1: Added random room generators and started a method to show how the room appears on the board.
 
 public class Room {
-  private char[][] tileType;
-	private int i, j, width, height, centreX, centreY;
+	public static Room randomCircularRoom() {
+		return (new Room((int)Math.floor(Math.random() * 50),(int)Math.floor(Math.random() * 50),(int)Math.ceil(Math.random() * 6 + 2)));
+	}
+	public static Room randomSquareRoom() {
+		return (new Room((int)Math.floor(Math.random() * 50),(int)Math.floor(Math.random() * 50)));
+	}
+		
+	private int i, j, width, height, centreX, centreY, radius;
+
+	private char[][] tileType;
 	
 	//creates rectangular room
 	public Room (int centreX, int centreY) {
-		int width = (int) Math.ceil(Math.random() * 5) + 2, height = (int) Math.ceil(Math.random() * 5) + 2;
+		width = (int) Math.ceil(Math.random() * 5) + 2;
+		height = (int) Math.ceil(Math.random() * 5) + 2;
 		this.centreX = centreX;
 		this.centreY = centreY;
 		tileType = new char[(2 * height) + 1][(2 * width) + 1];
-		for (i = centreY - height; i <= centreY + height; i++) {
-			for (j = centreX - width; j <= centreX + width; j++) {
-				if ((centreX - j >= 0) && (centreX + j <= width - 1) && (centreY - i >= 0) && (centreY + i <= height - 1)) {
-					tileType[i][j] = '~';
-				}
+		for (i = 0; i <= height; i++) {
+			for (j = 0; j <= width; j++) {
+				tileType[i][j] = '~';
 			}
 		}
 	}
-
+	
 	//creates circular room
 	public Room (int centreX, int centreY, int radius) {
+		this.radius = radius;
 		tileType = new char[(2 * radius) + 1][(2 * radius) + 1];
-		for (i = centreY - height; i <= centreY + height; i++) {
-			for (j = centreX - width; j <= centreX + width; j++) {
-				if (Board.xyDist(centreY, i, centreX, j) <= radius) {
+		width = 2 *radius + 1;
+		height = 2 * radius + 1;
+		for (i = 0; i < height; i++) {
+			for (j = 0; j < width; j++) {
+				if (Math.floor(Board.xyDist(centreX, centreX-radius+j, centreY, centreY-radius+i)) <= radius) {
 					tileType[i][j] = '~';
 				} else {
 					tileType[i][j] = ' ';
@@ -44,4 +55,16 @@ public class Room {
 	public char getTile(int y, int x) {
 		return tileType[i][j];
 	}
+	
+	public String toString() {
+		String out = "";
+		for (i = 0; i < height;i++) {
+			for (j = 0; j < width; j++) {
+				out = out + tileType[i][j];
+			}
+			out = out + "\r";
+		}
+		return out;
+	}
+	
 }
