@@ -4,6 +4,7 @@
 
 // Known errors:
 //	.determineVisible does not act as intended. Compiles just fine, however.	
+//	.merge() does not function as of yet
 
 //Update 1: Fixed mistakes in .get and .set methods. Fixed compilation problem
 //Update 2: Added a .toString() method to simplify creation of JFrame over using .printboard()
@@ -11,7 +12,10 @@
 //          the true contents of a board.
 //Update 4: New approach for map. Now starts with a blank grid then places room and corridors. WIP.
 	    Added Room Class to make this task easier, as well as a merging method to Board.
+//Update 5: Minor fixes
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.geom.Point2D;
@@ -20,7 +24,7 @@ import java.util.HashMap;
 
 public class Board {
 	private int[][] tileCreatureid = new int[50][50];
-	private int xlimit = 10, ylimit = 10, i, j = 0;
+	private int xlimit = 50, ylimit = 50, i, j = 0;
 	private char[][] tileType = new char[ylimit][xlimit], visTile = new char[ylimit][xlimit];
 	private Item[][] tileItem = new Item[ylimit][xlimit];
 	private boolean[][] shapeable = new boolean[ylimit][xlimit];
@@ -56,7 +60,7 @@ public class Board {
 	
 	//sets the character shown in a tile to the character representation of the Agent.
 	public void setAgent(int id, int x, int y) {
-		if (tileType[y][x] != 0) {
+		if (tileType[y][x] != ' ') {
 			tileCreatureid[y][x] = id;
 		}
 	}
@@ -66,7 +70,7 @@ public class Board {
 	
 	//determines linear distance between two tiles
 	public static double xyDist (int x1, int x2, int y1, int y2) {
-		return Math.sqrt(((x2 - x1) * (x2 - x1)) - ((y2 - y1) * (y2 - y1))); 
+		return Math.sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1))); 
 	}
 	
 	// uses the player's current position and sight radius to determine which tiles can currently be seen
@@ -103,7 +107,7 @@ public class Board {
 	
 	
 	//prints the board as the player sees it.
-	public void printBoard() {
+	public void printBoard(Player player) {
 		this.determineVisible(player.getSight(),player.getX(), player.getY()); // will use .get methods in final version
 		for (i = 0; i < ylimit;i++) {
 			for (j = 0; j < xlimit; j++) {
@@ -194,31 +198,74 @@ public class Board {
 	
 	//sets all shapeable tiles to ~
 	private void openup() {
-		// TODO Auto-generated method stub
-		
+		double chance;
+		for (i=0;i<ylimit;i++) {
+			for (j=0;j<xlimit;j++) {
+				if (shapeable[i][j] == true) {
+					tileType[i][j] = '~';
+				}
+				if (tileType[i][j] == ' ') {
+					chance = Math.random();
+					if (chance >= 0.7) {
+						tileType[i][j] = '~';
+					}
+				}
+			}
+		}
 	}
 
 	//generates a bunch of items and places them on the board
 	private void additems() {
-		// TODO Auto-generated method stub
-		
+		double chance;
+		for (i=0;i<ylimit;i++) {
+			for (j=0;j<xlimit;j++) {
+				chance = Math.random();
+				if (chance <= 0.05) {
+					tileItem[i][j] = Item.randomItem();
+				}
+			}
+		}
 	}
 
 	//generates a bunch of monsters and places them on the board
 	private void addmonsters() {
-		// TODO Auto-generated method stub
-		
+		double chance;
+		for (i=0;i<ylimit;i++) {
+			for (j=0;j<xlimit;j++) {
+				chance = Math.random();
+				if (chance <= 0.05) {
+					int listposition = Client.getMonsterListSize();
+					Client.createRandomMonster(listposition);
+				}
+			}
+		}
 	}
+		
+	
 
 	//shapes as one large circular room, adds more monsters than normal
 	private void shapearena() {
-		// TODO Auto-generated method stub
-		
+		Room r = new Room((xlimit / 2), (ylimit / 2), ((int)Math.ceil(Math.random() * 15) + 5));
+		mergeRoom(r);
 	}
 
 	//shapes as a series of weaving corridors
 	private void shapelabyrinth() {
-		// TODO Auto-generated method stub
+		int pointx1 = (int)Math.ceil(Math.random() * xlimit), pointy1 = (int)Math.ceil(Math.random() * ylimit);
+		int pointx2 = (int)Math.ceil(Math.random() * xlimit), pointy2 = (int)Math.ceil(Math.random() * ylimit);
+		connect(pointx1, pointx2, pointy1, pointy2);
+	}
+
+	private void connect(int pointx1, int pointx2, int pointy1, int pointy2) {
+		// connects tiles e.g.
+		//
+		//		         ~~~P~
+		//		       ~~~
+		//		     ~~~
+		//		  ~~~~		 
+		//		P~~
+		//
+		// where P represent
 		
 	}
 
@@ -244,7 +291,7 @@ public class Board {
 	private void mergeRoom(Room room) {
 		for (i=0;i<ylimit;i++) {
 			for (j=0;j<xlimit;j++) {
-				// lotsa code will go here
+
 			}
 		}
 		
@@ -271,7 +318,6 @@ public class Board {
 			}
 	}
 			
-	// various .get / .set methods
 	public int getWidth() {
 		return xlimit;
 	}
@@ -300,3 +346,6 @@ public class Board {
 		tileItem[y][x] =  item;
 	}
 }
+
+
+
