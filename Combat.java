@@ -1,12 +1,12 @@
+
 public class Combat {
 	
 	
 	
 	
-	public int calculateXP(Player p, Monster m){
+	public int calculateXP(Player p, int mLevel){
 		int base = 300;
 		int pLevel = Player.getLevel(p);
-		int mLevel = Monster.getLevel(m);
 		int newXP = 0;
 		
 		if ( pLevel<=3 && mLevel<=3 && pLevel != mLevel){
@@ -25,7 +25,8 @@ public class Combat {
 	
 	public int giveXP(Player p, Monster m){
 		
-		return Player.getXP(p) + calculateXP(p, m);
+		int mLevel = Monster.getLevel(m);
+		return Player.getXP(p) + calculateXP(p, mLevel);
 		
 	}
 	
