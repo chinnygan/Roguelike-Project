@@ -18,7 +18,7 @@ newXP = pLevel*base;
 newXP = (mLevel-pLevel)*base/2 + pLevel*base;
 }
 
-return newXP;
+return newXP; //should call giveXP().
 
 }
 
@@ -26,7 +26,7 @@ public int giveXP(Player p, Monster m){
 
 int mLevel = Monster.getLevel(m);
 return Player.getXP(p) + calculateXP(p, mLevel);
-//or: Player.giveXP(calculateXP(p, mLevel));
+//instead of returning it should call Player.setXP()
 
 }
 
