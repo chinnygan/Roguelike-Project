@@ -1,0 +1,130 @@
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+
+public class Client implements KeyListener {
+  
+  //tells the JVM to listen for keys in this class and makes the program focus on this class
+  public Client(){
+    addKeyListener(this);
+    setFocusable(true);
+  }
+  
+  public static void main(String[] args) {
+    ArrayList<Board> boards = new ArrayList<Board>();
+    ArrayList<Monster> monsters = new ArrayList<Monster>();
+    int level = 0;
+    initialize();
+    run();
+  }
+  
+  //Initializes the board
+  public void initialize(){
+    newBoard();
+    setPlayer();
+    addMonsters();
+    setMonsters();
+    countMonsters();
+  }
+  
+  //Main game loop
+  public void run(){
+    
+    while(true){
+      try{
+        update();
+        draw();
+        Thread.sleep(15); 
+      }
+      catch(Exception e){ 
+        e.printStackTrace(); 
+      }
+    }
+  }
+  //updates the game when both the player and monsters have carried out their actions
+  public void update(){
+    getPlayerAction();
+    for(Monster m: monsters)
+      m.action;
+  }
+  //redraws what's on the screen
+  public void draw(){
+    setPlayer();
+    setMonsters();
+    
+  }
+  
+  
+  //creates new board
+  public void newBoard(){
+    boards.add(new Board());
+    level += level;
+  }
+  
+  //adds a player to the board
+  public void setPlayer(){
+    player = new Agent();
+    int x = player.setX(0);
+    int y = player.setY(0);
+    //place on x and y
+  }
+  
+  //counts the monsters spawned when a new board is generated
+  public int countMonsters(){
+    return monsters.length;
+  }
+  
+  
+  //adds  monsters to the board
+  public void setMonsters(){
+    for(int i =1; i< level+3; i++){
+      monsters.add(new Monster(randomMonster));
+      monsters.setX(randomInt());
+      monsters.setY(randomInt());
+    }
+                    
+  }
+  //generates a random int value between 1 and 20
+  public int randomInt(){
+    Random generator = new Random(); 
+    int i = generator.nextInt(20) + 1;
+    return i;
+  }
+  
+  //ends the game
+  public void endGame(){
+    System.exit(0);
+  }        
+  
+  //assigns the game controls 
+  public void keyPressed(KeyEvent e){
+    int key = e.getKeyCode();
+    
+    if (key == KeyEvent.VK_LEFT)        //press left arrow to move player left
+      Agent.moveleft();
+    if (key == KeyEvent.VK_RIGHT)       //press right arrow to move player right
+      Agent.moveright();     
+    if (key == KeyEvent.VK_UP)         //press up arrow to move player up
+      Agent.moveup();
+    if (key == KeyEvent.VK_DOWN)       //press down arrow to move player down 
+      Agent.movedown();
+    if (key == KeyEvent.VK_O)          //press O to pause the game and open the options menu 
+      options();
+    if (key == KeyEvent.VK_I)          //press i to open the inventory
+      openInventory();
+    if (key == KeyEvent.VK_SPACE)      //press the space bar to attack
+      attack();
+    if (key== KeyEvent.VK_ESCAPE)      //press esc to exit the game
+      endGame();
+  }
+  
+  //ignore these   
+  public void keyReleased(KeyEvent e){
+    
+  }
+  
+  public void keyTyped(KeyEvent e){
+    
+  }
+  
+  }
