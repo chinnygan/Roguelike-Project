@@ -1,15 +1,40 @@
+import java.util.ArrayList;
+
 public class Monster extends Agent {
 
 	private int id, lvl, boardNum;
 	private String name, description;
 	private double dmg, def, hp;
 
-	//Constructor for the monster object
-	//TODO cause id to be read in from the text file
+	// Constructor for the monster object
+	// TODO cause id to be read in from the text file
 	public Monster(int x, int y, int id, int boardNumber) {
 		super(x, y);
 		this.id = id;
 		this.boardNum = boardNumber;
+
+		int i = 0;
+		ArrayList<String> raw = new ArrayList<String>();
+		In in = new In("C:/Users/Scott/Desktop/OOP/Roguelike/monsters.txt");
+		while (in.hasNextLine()) {
+			raw.add(i, in.readLine());
+			i++;
+		}
+		decrypt(raw.get(id));
+	}
+
+	public void decrypt(String s) {
+		name = s.substring(0, s.indexOf('('));
+		s = s.substring(s.indexOf('(') + 1, s.indexOf(')'));
+		dmg = Double.parseDouble(s.substring(0, s.indexOf(',')));
+		s = Item.chop(s);
+		def = Double.parseDouble(s.substring(0, s.indexOf(',')));
+		s = Item.chop(s);
+		lvl = Integer.parseInt((s.substring(0, s.indexOf(','))));
+		s = Item.chop(s);
+		hp = Double.parseDouble(s.substring(0, s.indexOf(',')));
+		s = Item.chop(s);
+		description = (s.substring(0, s.length()));
 	}
 
 	// Finds the distance between the Monster and the player, and determines
@@ -69,13 +94,16 @@ public class Monster extends Agent {
 		this.def += boost;
 		this.hp += boost;
 
-		this.name = this.name + "buffed " + boost;
+		this.name = this.name + " (buffed " + boost + ")";
 	}
 
-	//Creates a random monster
-	public static Monster randomMonster(int xVal, int yVal, Player p, int boardNumber) {
-		
-		int randomID = (int) Math.random() * 10;
+	// Creates a random monster
+	public static Monster randomMonster(int xVal, int yVal, Player p,
+			int boardNumber) {
+
+		// The value this is multiplied should be changed by the number of lines
+		// in monsters.txt
+		int randomID = (int) (Math.random() * 3);
 
 		Monster ranMon = new Monster(xVal, yVal, randomID, boardNumber);
 
@@ -90,13 +118,21 @@ public class Monster extends Agent {
 
 	// Testing functions for the Monster
 	public static void main(String[] args) {
-		Monster monster1 = new Monster(5, 5, 1, 1);
+		
 		Player player = new Player();
 
-		// Set the Monster's x & y values here
-		monster1.setX(5);
-		monster1.setY(5);
+		Monster monster1 = Monster.randomMonster(5, 5, player, 1);
 
+		System.out.println("Name: " + monster1.getName());
+		System.out.println("Damage: " + monster1.getDmg());
+		System.out.println("Defence: " + monster1.getDef());
+		System.out.println("Level: " + monster1.getLevel());
+		System.out.println("Hitpoints: " + monster1.getHP());
+		System.out.println("Description: " + monster1.getDescription());
+
+		System.out.println();
+		
+		
 		// Set the Player's x & y values here
 		player.setX(0);
 		player.setY(0);
@@ -168,7 +204,7 @@ public class Monster extends Agent {
 		return description;
 	}
 
-	public void setDesc(String desc) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
