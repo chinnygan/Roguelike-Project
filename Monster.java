@@ -2,9 +2,8 @@ import java.util.ArrayList;
 
 public class Monster extends Agent {
 
-	private int id, lvl, boardNum;
-	private String name, description;
-	private double dmg, def, hp;
+	private int id, lvl, boardNum, def, hp;
+	private String name, description, dmg, code;
 
 	// Constructor for the monster object
 	// TODO cause id to be read in from the text file
@@ -26,14 +25,17 @@ public class Monster extends Agent {
 	public void decrypt(String s) {
 		name = s.substring(0, s.indexOf('('));
 		s = s.substring(s.indexOf('(') + 1, s.indexOf(')'));
-		dmg = Double.parseDouble(s.substring(0, s.indexOf(',')));
-		s = Item.chop(s);
-		def = Double.parseDouble(s.substring(0, s.indexOf(',')));
-		s = Item.chop(s);
+		dmg = (s.substring(0, s.indexOf(',')));
+		s = ItemResource.chop(s);
+		def = Integer.parseInt(s.substring(0, s.indexOf(',')));
+		s = ItemResource.chop(s);
+		hp = Integer.parseInt(s.substring(0, s.indexOf(',')));
+		s = ItemResource.chop(s);
+		setCode(s.substring(0, s.indexOf(',')));
+		s = ItemResource.chop(s);
 		lvl = Integer.parseInt((s.substring(0, s.indexOf(','))));
-		s = Item.chop(s);
-		hp = Double.parseDouble(s.substring(0, s.indexOf(',')));
-		s = Item.chop(s);
+		s = ItemResource.chop(s);
+
 		description = (s.substring(0, s.length()));
 	}
 
@@ -86,13 +88,14 @@ public class Monster extends Agent {
 		}
 	}
 
+	// TODO create a function that boosts the damage negatively or positively
 	// Buffs the monsters statistics by the "boost", then changes the name of
 	// the monster to reflect this boost
 	public void buff(int boost) {
 
-		this.dmg += boost;
 		this.def += boost;
 		this.hp += boost;
+		this.lvl += boost;
 
 		this.name = this.name + " (buffed " + boost + ")";
 	}
@@ -101,6 +104,7 @@ public class Monster extends Agent {
 	public static Monster randomMonster(int xVal, int yVal, Player p,
 			int boardNumber) {
 
+		// TODO find total lines of monsters.text
 		// The value this is multiplied should be changed by the number of lines
 		// in monsters.txt
 		int randomID = (int) (Math.random() * 3);
@@ -109,6 +113,7 @@ public class Monster extends Agent {
 
 		int levelDif = p.getLevel() - ranMon.getLevel();
 
+		// TODO Create damage boost function
 		if (levelDif >= 5 || levelDif <= -5) {
 			ranMon.buff(levelDif);
 		}
@@ -118,7 +123,7 @@ public class Monster extends Agent {
 
 	// Testing functions for the Monster
 	public static void main(String[] args) {
-		
+
 		Player player = new Player();
 
 		Monster monster1 = Monster.randomMonster(5, 5, player, 1);
@@ -127,12 +132,11 @@ public class Monster extends Agent {
 		System.out.println("Damage: " + monster1.getDmg());
 		System.out.println("Defence: " + monster1.getDef());
 		System.out.println("Level: " + monster1.getLevel());
-		System.out.println("Hitpoints: " + monster1.getHP());
+		System.out.println("Hitpoints: " + monster1.getHp());
 		System.out.println("Description: " + monster1.getDescription());
 
 		System.out.println();
-		
-		
+
 		// Set the Player's x & y values here
 		player.setX(0);
 		player.setY(0);
@@ -176,30 +180,6 @@ public class Monster extends Agent {
 		this.name = name;
 	}
 
-	public double getDmg() {
-		return dmg;
-	}
-
-	public void setDmg(double dmg) {
-		this.dmg = dmg;
-	}
-
-	public double getDef() {
-		return def;
-	}
-
-	public void setDef(double def) {
-		this.def = def;
-	}
-
-	public double getHP() {
-		return hp;
-	}
-
-	public void setHP(double hP) {
-		hp = hP;
-	}
-
 	public String getDescription() {
 		return description;
 	}
@@ -215,4 +195,37 @@ public class Monster extends Agent {
 	public void setBoardNum(int boardNum) {
 		this.boardNum = boardNum;
 	}
+
+	public int getHp() {
+		return hp;
+	}
+
+	public void setHp(int hp) {
+		this.hp = hp;
+	}
+
+	public void setDef(int def) {
+		this.def = def;
+	}
+
+	public void setDmg(String dmg) {
+		this.dmg = dmg;
+	}
+
+	public int getDef() {
+		return def;
+	}
+
+	public String getDmg() {
+		return dmg;
+	}
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
+
 }
