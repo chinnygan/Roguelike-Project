@@ -1,0 +1,65 @@
+package my;
+
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.GridLayout;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+public class Window extends JFrame {
+
+  private JPanel contentPane;
+
+	public static void main(String[] args) {
+		Window mainPanel = new Window();
+		mainPanel.addLabels();
+
+	}
+
+	public void addLabels() {
+		Player p = new Player(1,1);
+		String s1 = "Level: " + p.getLevel() + " Gold: " + p.getGold()
+				+ " Hp: " + p.getHp() + " (12)" + " Str: " + p.getStr()
+				+ " (16)" + " Arm: " + p.getArm() + " Exp: " + p.getExp();
+		JLabel label1 = new JLabel(s1);
+		label1.setVerticalAlignment(SwingConstants.BOTTOM);
+		label1.setHorizontalAlignment(SwingConstants.CENTER);
+		label1.setPreferredSize(new Dimension(800, 600));
+		contentPane.add(label1);
+		label1.setBorder(BorderFactory.createLineBorder(Color.black));
+		
+		JLabel label2 = new JLabel((Icon) new Board());
+		label2.setPreferredSize(new Dimension (800, 600));
+		// label2.setLocation(5,5);
+		contentPane.add(label2);
+
+
+		pack();
+		setVisible(true);
+
+	}
+
+	public Window() {
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setResizable(false);
+		setTitle("Rogue");
+		setContentPane(contentPane);
+		
+		add(new Board());
+		repaint();
+	}
+
+}
