@@ -1,0 +1,139 @@
+//Add to player class
+    //public Player getBounds(){
+	  	//	return new Player(getX(),getY());
+			//}
+
+//KeyEvent input doesn't work
+//can't get the drawbuffer to work correctly
+//collision detection needs to check for walls and undo last action
+
+import java.awt.Graphics2D;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.awt.image.BufferedImage;
+import java.util.ArrayList;
+import java.awt.Color;
+import java.awt.Toolkit;
+
+import javax.swing.JPanel;
+
+public class Client extends JPanel implements KeyListener{
+	ArrayList<Board> boards = new ArrayList<Board>();
+	BufferedImage buffer;
+	boolean collision;
+	
+	//tells the JMV to listen for keys in this class and gets it to focus on the class
+	public Client(){
+		collision = false;
+		setIgnoreRepaint(true);
+        addKeyListener(this);
+        setFocusable(true);
+	}
+	
+	//initializes the game
+	public void initialize(){
+		buffer = new BufferedImage(50,50,BufferedImage.TYPE_INT_RGB);
+		newBoard();
+	}
+	
+	//get's latest player action and monster action
+	public void update(){
+		Player.move();
+		for(Monster m: monsters)
+		      m.action;
+	}
+	
+	//checks if the player has intersected with an enemy or wall
+	public void checkCollisions(){
+		if (player.getBounds().intersects(enemy.getBounds()) || player.getBounds().intersects()
+	           player.collision = true;
+	else
+	    player.collision = false;
+				
+	}
+	
+	//draws what's going to be on screen into the buffer 
+	public void drawBuffer(){
+		
+		
+	}
+	
+	//draws what's in the buffer to the screen
+	public void drawScreen(){
+		Graphics2D g = (Graphics2D)this.getGraphics();
+		g.drawImage(buffer,0,0,this);
+		Toolkit.getDefaultToolkit().sync();
+		g.dispose();
+	}
+	
+	//Game loop
+	public void run(){
+		initialize();
+		while(true){
+		    try{
+		        update();
+		        checkCollisions();
+		        drawBuffer();
+		        drawScreen();
+		        Thread.sleep(15);
+		    }
+		    catch(Exception e){
+		        e.printStackTrace();
+		    }    
+		}
+		
+	}
+	
+	//generates new board
+	public void newBoard(){
+		boards.add(new Board());
+	}    
+	
+	//ends the game
+	public void endGame(){
+		System.exit(0);
+	}  
+	
+	
+	//assigns the game controls 
+	  public void keyPressed(KeyEvent e){
+	    int key = e.getKeyCode();
+	    if (key == KeyEvent.VK_NUMPAD1)
+	    	Player.SW();
+	    if (key == KeyEvent.VK_NUMPAD2)
+	    	Player.S();
+	    if (key == KeyEvent.VK_NUMPAD3)
+	    	Player.SE();
+	    if (key == KeyEvent.VK_NUMPAD4)
+	    	Player.W();
+	    if (key == KeyEvent.VK_NUMPAD6)
+	    	Player.E();
+	    if (key == KeyEvent.VK_NUMPAD7)
+	    	Player.NW();
+	    if (key == KeyEvent.VK_NUMPAD8)
+	    	Player.N();
+	    if (key == KeyEvent.VK_NUMPAD1)
+	    	Player.NE();
+	    if (key == KeyEvent.VK_SPACE)
+	    	Player.attack();
+	    if (key == KeyEvent.VK_ESCAPE)
+	    	endGame();
+	    if (key == KeyEvent.VK_I)
+	    	openInventory();
+	    if (key == KeyEvent.VK_O)
+	    	options();	      	
+	   	    	
+	  }
+	  
+	  //ignore  
+	  public void keyReleased(KeyEvent e){
+	    
+	  }
+	  
+	  //ignore
+	  public void keyTyped(KeyEvent e){
+	    
+	  }
+
+	
+}
