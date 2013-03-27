@@ -1,6 +1,6 @@
 public class Combat {
 
-  public static void calculateXP(Player p, int mLevel){
+	public static void calculateXP(Player p, int mLevel){
 		int base = 300;
 		int pLevel = p.getLevel();
 		int newXP = 0;
@@ -29,17 +29,34 @@ public class Combat {
 
 	}
 	
-	public static void damage(Player p, int d){
-		
+	public static void damageP(Player p, int d){
 		if (p.getHp()>0){
 			p.setHp(p.getHp() - d);
 		}
+	}
+	
+	public static void damageM(Monster m, int d){
+		if (m.getHp()>0){
+			m.setHp(m.getHp() - d);
+		}
+	}
 
+	public static void attackingPM(Player p, Monster m){
+		int d = p.getStr()-m.getDef();
+		damageM(m,d);
+	}
+	
+	public static void attackingMP(Monster m, Player p){
+		int d = m.getStr()-p.getArm();
+		damageP(p,d);
+	}
+	
+	public static void attackingMM(Monster m1, Monster m2){
+		
 	}
 	
 	public static void heal(int pow, Player p) {
 		p.setHp(p.getHp() + pow);
-		
 	}
 
 	//test
@@ -47,9 +64,8 @@ public class Combat {
 		Player p = new Player(0,0);
 		int monster = 3;
 		calculateXP(p,5);
-	}
-
-	
+	}	
 
 }
+
 
