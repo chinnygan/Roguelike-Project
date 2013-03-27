@@ -1,58 +1,55 @@
 public class Combat {
 
+  public static void calculateXP(Player p, int mLevel){
+		int base = 300;
+		int pLevel = p.getLevel();
+		int newXP = 0;
 
+		if ( pLevel<=3 && mLevel<=3 && pLevel != mLevel){
+			newXP = pLevel*base;
 
+		}else if ( pLevel == mLevel) {
+			newXP = pLevel*base;
 
-public int calculateXP(Player p, int mLevel){
-int base = 300;
-int pLevel = Player.getLevel(p);
-int newXP = 0;
+		}else if (Math.abs(mLevel-pLevel)==1) {
+			newXP = pLevel*base + (mLevel-pLevel)*(pLevel*base/3);
+		}else if((Math.abs(mLevel-pLevel)==2)&&(mLevel<pLevel)){
+			newXP = pLevel*base - ((base*pLevel)/2);
+		}else if((Math.abs(mLevel-pLevel)==2)&&(mLevel>pLevel)){
+			newXP = pLevel*base + ((base*mLevel)/2);
+		}
 
-if ( pLevel<=3 && mLevel<=3 && pLevel != mLevel){
-newXP = pLevel*base;
+		giveXP(p, newXP);
 
-}else if ( pLevel == mLevel) {
-newXP = pLevel*base;
+	}
 
-}else {
-newXP = (mLevel-pLevel)*base/2 + pLevel*base;
-}
+	public static void giveXP(Player p, int xp){
 
-return newXP; //should call giveXP().
+		p.setXP(p.getXP() + xp);
 
-}
+	}
+	
+	public static void damage(Player p, int d){
+		
+		if (p.getHp()>0){
+			p.setHp(p.getHp() - d);
+		}
 
-public int giveXP(Player p, Monster m){
+	}
+	
+	public static void heal(int pow, Player p) {
+		p.setHp(p.getHp() + pow);
+		
+	}
 
-int mLevel = Monster.getLevel(m);
-return Player.getXP(p) + calculateXP(p, mLevel);
-//instead of returning it should call Player.setXP()
+	//test
+	public static void main(String[] args) {
+		Player p = new Player(0,0);
+		int monster = 3;
+		calculateXP(p,5);
+	}
 
-}
-
-
-
-public Combat(Agent attacker, Agent defender){
-
-int attack = getAttack(attacker);
-int defence = getDefence(defender);
-int newHP;
-
-if (attack<=defence){
-newHP = 0;
-} else {
-newHP = Defender.getHP()-(defence-attack);
-}
-
-Player.setHP(newHP);
-//This is supposing the attacker is a monster.
-//I don't really get the concept behind this method.
-
-}
-
-public void heal(int n){
-
-Player.setHp(Player.getHp()+n);
+	
 
 }
-}
+
