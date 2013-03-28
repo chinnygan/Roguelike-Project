@@ -1,0 +1,147 @@
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.EventQueue;
+import java.awt.Frame;
+import java.awt.GridLayout;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+
+import javax.swing.BorderFactory;
+import javax.swing.Icon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
+import javax.swing.SwingConstants;
+import javax.swing.border.EmptyBorder;
+
+public class Window extends JFrame {
+
+  private JPanel contentPane;
+  private int PlayerX=0, PlayerY=0;
+  private boolean inGame = true;
+  
+  
+  public void addLabels() {
+		
+		// adding the labels which represent the bottom line with information about the player's status;
+		
+		Player p = new Player(1,1);
+		String s1 = "Level: " + p.getLevel() + " Gold: " + p.getGold()
+				+ " Hp: " + p.getHp() + " (12)" + " Str: " + p.getStr()
+				+ " (16)" + " Arm: " + p.getArm() + " Exp: " + p.getExp();
+		JLabel label1 = new JLabel(s1);
+		label1.setVerticalAlignment(SwingConstants.BOTTOM);
+		label1.setHorizontalAlignment(SwingConstants.CENTER);
+		JLabel l = new JLabel(Client.boards.get(0).toString());
+		//l.setVerticalAlignment(SwingConstants.TOP);
+		l.setHorizontalAlignment(SwingConstants.CENTER);
+		l.setSize(800, 500);
+		
+		l.setBorder(BorderFactory.createLineBorder(Color.black));
+		contentPane.add(l);
+		contentPane.add(label1);
+		label1.setBorder(BorderFactory.createLineBorder(Color.black));
+		pack();
+		setVisible(true);
+		setSize(800, 600);
+
+	}
+
+	public Window() {
+		JLabel j = new JLabel(new Board().toString());
+		add(j);
+		addKeyListener(new TAdapter());
+		JFrame frame = new JFrame();
+		frame.getContentPane();
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		// setBounds(100, 100, 450, 300);
+		contentPane = new JPanel();
+		contentPane.setBorder(new EmptyBorder(5, 5, 5, 5));
+		contentPane.setLayout(new BorderLayout(0, 0));
+		setResizable(false);
+		setTitle("Rogue Game");
+		setSize(800, 600);
+		setLocationRelativeTo(null);
+		setBackground(Color.black);
+		setFocusable(true);
+		setContentPane(contentPane);
+	}
+	
+	private class TAdapter extends KeyAdapter {
+
+        public void keyPressed(KeyEvent e) {
+
+        	int keycode = e.getKeyCode();
+    		switch (keycode) {
+    		case (KeyEvent.VK_NUMPAD9):
+    	    	Client.getPlayer().moveUpRight();
+    			System.out.println();
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD8):
+    	    	Client.getPlayer().moveUp();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD7):
+    	    	Client.getPlayer().moveUpLeft();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD6):
+    	    	Client.getPlayer().moveRight();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD4):
+    	    	Client.getPlayer().moveLeft();
+    	    System.out.println(keycode);
+    	    System.getProperty("space.separator");
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD3):
+    	    	Client.getPlayer().moveDownRight();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD2):
+    	    	Client.getPlayer().moveDown();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_NUMPAD1):
+    	    	Client.getPlayer().moveDownLeft();
+    	    System.out.println(keycode);
+    	    	break;
+    	    case (KeyEvent.VK_I):
+    	    	Client.openInventory();
+    	    System.out.println("i");
+    	    	break;
+    	    case (KeyEvent.VK_GREATER):
+    	    	Client.moveUpFloor();
+    	    	break;
+    	    case (KeyEvent.VK_LESS):
+    	    	Client.moveDownFloor();
+    	    	break;
+    	    case (KeyEvent.VK_STOP):
+    	    	Client.rest();
+    	    	break;
+    	    case (KeyEvent.VK_Q):
+    	    	Client.getPlayer().useFirstConsumable();
+    	    break;
+    	    case (KeyEvent.VK_W):
+    	    	// will call either p.equipWeapon(r) or p.equipArmour(r) depending on the type of item chosen 
+    	    	break;
+    	    case (KeyEvent.VK_T):
+    	    	Client.getPlayer().removeWeapon();
+    	    	break;
+    	    case (KeyEvent.VK_A):
+    	    	Client.getPlayer().removeArmour();
+    	    	break;
+
+    		}
+        }	
+}
+	public static void main(String[] args) {
+		Client.boards.add(0,new Board());
+		Client.createPlayer();
+		Window mainPanel = new Window();
+		mainPanel.addLabels();
+	}
+	
+}
