@@ -1,0 +1,208 @@
+
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
+import java.util.ArrayList;
+import java.util.Random;
+
+import javax.swing.JPanel;
+
+
+public class Client extends JPanel implements KeyListener {
+
+  static ArrayList<Board> boards = new ArrayList<Board>();
+    static ArrayList<Monster> monsters = new ArrayList<Monster>();
+    static int floor = 0;
+    static ItemResource itemLibrary = new ItemResource();
+    static Player p = new Player(0,0);
+    public static void main(String[] args) {
+    	// tests go here for now
+    	///////////////////////////////////////
+    	
+    new Window();
+		////////////////////////////////////////
+  }
+  
+  //Initializes the board
+  public void initialize(){
+    newBoard();
+    createPlayer();
+  }
+  
+  //Main game loop
+  //updates the game when both the player and monsters have carried out their actions
+  public void update(){
+    getPlayerAction();
+    for(Monster m: monsters) {
+    	m.behaviour();
+    }
+  }
+  private void getPlayerAction() {
+	// TODO Auto-generated method stub
+	
+}
+
+//redraws what's on the screen
+  public void draw(){
+    createPlayer();
+    
+  }
+  
+  
+  //creates new board
+  public void newBoard(){
+    boards.add(new Board());
+    floor += floor;
+  }
+  
+  public static void createPlayer() {
+	  boolean placed = false;
+	  while (placed == false) {
+		  int x = (int) (Math.random() * 29);
+		  int y = (int) (Math.random() * 29);
+		  if (boards.get(floor).getTileType(x, y) == '~' & boards.get(floor).getAgent(x, y) == 0) {
+			  p = new Player(x,y);
+			  boards.get(floor).setTileCreatureid(x, y, 1);
+			  placed = true;
+		  }
+	  }
+  }
+
+  
+  
+ 
+  //generates a random int value between 1 and 20
+  public int randomInt(){
+    Random generator = new Random();
+    int i = generator.nextInt(50) + 1;
+    return i;
+  }
+  
+  //ends the game
+  public void endGame(){
+    System.exit(0);
+  }
+  
+  public static void openInventory(){
+	  
+  }
+  
+  //remnant
+  public void keyPressed(KeyEvent e){
+    int key = e.getKeyCode();
+    
+    switch (key) {
+    case (KeyEvent.VK_NUMPAD9):
+    	p.moveUpRight();
+    	break;
+    case (KeyEvent.VK_NUMPAD8):
+    	p.moveUp();
+    	break;
+    case (KeyEvent.VK_NUMPAD7):
+    	p.moveUpLeft();
+    	break;
+    case (KeyEvent.VK_NUMPAD6):
+    	p.moveRight();
+    	break;
+    case (KeyEvent.VK_NUMPAD4):
+    	p.moveLeft();
+    	break;
+    case (KeyEvent.VK_NUMPAD3):
+    	p.moveDownRight();
+    	break;
+    case (KeyEvent.VK_NUMPAD2):
+    	p.moveDown();
+    	break;
+    case (KeyEvent.VK_NUMPAD1):
+    	p.moveDownLeft();
+    	break;
+    case (KeyEvent.VK_I):
+    	openInventory();
+    	break;
+    case (KeyEvent.VK_GREATER):
+    	moveUpFloor();
+    	break;
+    case (KeyEvent.VK_LESS):
+    	moveDownFloor();
+    	break;
+    case (KeyEvent.VK_STOP):
+    	rest();
+    	break;
+    case (KeyEvent.VK_Q):
+    	p.useFirstConsumable();
+    break;
+    case (KeyEvent.VK_W):
+    	// will call either p.equipWeapon(r) or p.equipArmour(r) depending on the type of item chosen 
+    	break;
+    case (KeyEvent.VK_T):
+    	p.removeWeapon();
+    	break;
+    case (KeyEvent.VK_A):
+    	p.removeArmour();
+    	break;
+    }
+  }
+  
+  static void rest() {
+	  Combat.heal(1, p);
+}
+
+static void moveDownFloor() {
+	floor = floor - 1;
+	
+}
+
+static void moveUpFloor() {
+	floor = floor + 1;
+	
+}
+
+
+//ignore these
+  public void keyReleased(KeyEvent e){
+    
+  }
+  
+  public void keyTyped(KeyEvent e){
+    
+  }
+
+public static ItemResource getItemResource() {
+	return itemLibrary;
+}
+
+public static int getMonsterListSize() {
+	return monsters.size();
+}
+  
+public static Player getPlayer() {
+	return p;
+}
+
+public static void setFloor(int f) {
+	floor = f;
+}
+
+public static void fillBoardWithMonsters() {
+	int number = (int) (Math.random() * 5) + 4;
+	int x = (int) (Math.random() * 49);
+	  int y = (int) (Math.random() * 49);
+	  if (boards.get(floor).getTileType(x, y) == '~' & boards.get(floor).getAgent(x, y) == 0) {
+		  Monster.randomMonster(x, y, p);
+	  }
+}
+
+public static int getCurrentFloor() {
+	return floor;
+}
+
+public static ArrayList<Monster> getMonsterList() {
+	return monsters;
+}
+
+public static ArrayList<Board> getBoardList() {
+	return boards;
+}
+public Client() {
+	boards.add(0,new Board());
+}
+}
